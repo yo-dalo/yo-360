@@ -35,6 +35,142 @@ const panoConfig = {
                     text: 'Click karke dusri image dekhein',
                     type: 'link',
                     targetSceneId: 'scene-2'
+                },
+                {
+                    id: 'hs-3',
+                    yaw: 15,
+                    pitch: -0.2,
+                    title: 'Go to Room 2',
+                    text: 'Click karke dusri image dekhein',
+                    type: 'link',
+                    targetSceneId: 'scene-2'
+                }
+            ]
+        },
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
+                }
+            ]
+        }
+        ,
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
+                }
+            ]
+        },
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
+                }
+            ]
+        },
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
+                }
+            ]
+        },
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
+                }
+            ]
+        },
+        {
+            id: 'scene-2',
+            name: 'Second Room',
+            imageUrl: panoImage2.src || panoImage2,
+            initialViewParameters: {
+                yaw: 0,
+                pitch: 0,
+                fov: Math.PI / 2
+            },
+            hotspots: [
+                {
+                    id: 'hs-3',
+                    yaw: 0,
+                    pitch: -0.3,
+                    title: 'Go to Main Room',
+                    text: 'Main entrance par wapas jayein',
+                    type: 'link',
+                    targetSceneId: 'scene-1'
                 }
             ]
         },
@@ -94,12 +230,16 @@ export default function Viewer() {
                 limiter
             );
 
+
+
             const scene = viewer.createScene({
                 source: source,
                 geometry: geometry,
                 view: view,
                 pinFirstLevel: true
             });
+
+
 
             scenesMap[sceneData.id] = {
                 data: sceneData,
@@ -112,7 +252,7 @@ export default function Viewer() {
 
                 const iconWrapper = document.createElement('div');
                 iconWrapper.className = `hotspot-icon ${hs.type === 'link' ? 'link-icon' : ''}`;
-                
+
                 if (hs.type === 'link') {
                     iconWrapper.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
                 } else {

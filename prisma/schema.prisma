@@ -8,3 +8,13 @@ datasource db {
   // Optional: connection settings
   relationMode = "prisma" // or "foreignKeys"
 }
+
+
+
+model Project {
+  id        String   @id @default(uuid())
+  name      String
+  config    Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
