@@ -1,213 +1,73 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Marzipano from 'marzipano';
-import panoImage1 from '../ydc.jpeg';
-import panoImage2 from '../k.jpeg';
+import axios from 'axios';
 
-const panoConfig = {
-    settings: {
-        mouseViewMode: 'drag'
-    },
-    scenes: [
-        {
-            id: 'scene-1',
-            name: 'Main Room',
-            imageUrl: panoImage1.src || panoImage1,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-1',
-                    yaw: 5,
-                    pitch: -0.3,
-                    title: 'Welcome Center',
-                    text: 'Yeh main entrance hai.',
-                    type: 'info'
-                },
-                {
-                    id: 'hs-2',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Room 2',
-                    text: 'Click karke dusri image dekhein',
-                    type: 'link',
-                    targetSceneId: 'scene-2'
-                },
-                {
-                    id: 'hs-3',
-                    yaw: 15,
-                    pitch: -0.2,
-                    title: 'Go to Room 2',
-                    text: 'Click karke dusri image dekhein',
-                    type: 'link',
-                    targetSceneId: 'scene-2'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        }
-        ,
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        },
-        {
-            id: 'scene-2',
-            name: 'Second Room',
-            imageUrl: panoImage2.src || panoImage2,
-            initialViewParameters: {
-                yaw: 0,
-                pitch: 0,
-                fov: Math.PI / 2
-            },
-            hotspots: [
-                {
-                    id: 'hs-3',
-                    yaw: 0,
-                    pitch: -0.3,
-                    title: 'Go to Main Room',
-                    text: 'Main entrance par wapas jayein',
-                    type: 'link',
-                    targetSceneId: 'scene-1'
-                }
-            ]
-        }
-    ]
-};
+interface Hotspot {
+    id: string;
+    yaw: number;
+    pitch: number;
+    title?: string;
+    text?: string;
+    type?: string;
+    targetSceneId?: string;
+}
+
+interface Scene {
+    id: string;
+    name: string;
+    imageUrl: string;
+    initialViewParameters: {
+        yaw: number;
+        pitch: number;
+        fov: number;
+    };
+    hotspots?: Hotspot[];
+}
+
+interface ApiResponse {
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+    config: {
+        settings: {
+            mouseViewMode: string;
+        };
+        scenes: Scene[];
+    };
+}
 
 export default function Viewer() {
     const panoRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<any>(null);
+    const [panoData, setPanoData] = useState<ApiResponse | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!panoRef.current) return;
+        const fetchConfig = async () => {
+            try {
+                const response = await axios.get<ApiResponse>('/api/tour');
+                setPanoData(response.data);
+            } catch (err) {
+                setError('Panorama configuration load hone mein dikkat aayi');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchConfig();
+    }, []);
+
+    useEffect(() => {
+        if (!panoData || !panoRef.current || !panoData.config?.scenes?.length) return;
+
+        const { settings, scenes } = panoData.config;
 
         const viewerOpts = {
             controls: {
-                mouseViewMode: panoConfig.settings.mouseViewMode
+                mouseViewMode: settings?.mouseViewMode || 'drag'
             }
         };
 
@@ -216,12 +76,12 @@ export default function Viewer() {
 
         const scenesMap: { [key: string]: any } = {};
 
-        panoConfig.scenes.forEach((sceneData) => {
+        scenes.forEach((sceneData) => {
             const source = Marzipano.ImageUrlSource.fromString(sceneData.imageUrl);
             const geometry = new Marzipano.EquirectGeometry([{ width: 4000 }]);
 
             const limiter = Marzipano.RectilinearView.limit.traditional(
-                1024,
+                6096,
                 (100 * Math.PI) / 180
             );
 
@@ -230,8 +90,6 @@ export default function Viewer() {
                 limiter
             );
 
-
-
             const scene = viewer.createScene({
                 source: source,
                 geometry: geometry,
@@ -239,14 +97,13 @@ export default function Viewer() {
                 pinFirstLevel: true
             });
 
-
-
             scenesMap[sceneData.id] = {
                 data: sceneData,
                 marzipanoScene: scene
             };
 
-            sceneData.hotspots.forEach((hs) => {
+            const hotspots = sceneData.hotspots || [];
+            hotspots.forEach((hs) => {
                 const container = document.createElement('div');
                 container.className = 'hotspot-container';
 
@@ -259,16 +116,18 @@ export default function Viewer() {
                     iconWrapper.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
                 }
 
-                const tooltip = document.createElement('div');
-                tooltip.className = 'hotspot-tooltip';
-                tooltip.innerHTML = `<strong>${hs.title}</strong><p>${hs.text}</p>`;
+                if (hs.title || hs.text) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'hotspot-tooltip';
+                    tooltip.innerHTML = `${hs.title ? `<strong>${hs.title}</strong>` : ''}${hs.text ? `<p>${hs.text}</p>` : ''}`;
+                    container.appendChild(tooltip);
+                }
 
                 container.appendChild(iconWrapper);
-                container.appendChild(tooltip);
 
                 if (hs.type === 'link' && hs.targetSceneId) {
                     container.addEventListener('click', () => {
-                        const target = scenesMap[hs.targetSceneId];
+                        const target = scenesMap[hs.targetSceneId!];
                         if (target) {
                             target.marzipanoScene.switchTo();
                         }
@@ -282,14 +141,33 @@ export default function Viewer() {
             });
         });
 
-        scenesMap[panoConfig.scenes[0].id].marzipanoScene.switchTo();
+        const firstSceneId = scenes[0].id;
+        if (scenesMap[firstSceneId]) {
+            scenesMap[firstSceneId].marzipanoScene.switchTo();
+        }
 
         return () => {
             if (viewerRef.current) {
                 viewerRef.current.destroy();
             }
         };
-    }, []);
+    }, [panoData]);
+
+    if (loading) {
+        return (
+            <div style={{ width: '100vw', height: '100vh', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+                Loading Viewer Config...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div style={{ width: '100vw', height: '100vh', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ef4444' }}>
+                {error}
+            </div>
+        );
+    }
 
     return (
         <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', backgroundColor: '#0f172a' }}>

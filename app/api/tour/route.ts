@@ -20,7 +20,7 @@ export async function GET() {
             }
         });
 
-        return NextResponse.json(projects, { status: 200 });
+        return NextResponse.json(projects[0], { status: 200 });
     } catch (error) {
         console.error('Fetch All Error:', error);
         return NextResponse.json(
