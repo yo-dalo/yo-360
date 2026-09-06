@@ -8,3 +8,38 @@ datasource db {
   // Optional: connection settings
   relationMode = "prisma" // or "foreignKeys"
 }
+
+
+
+
+model Project {
+  id       String  @id @default(uuid())
+  name     String
+  slug     String  @unique
+  settings Json?
+  scenes   Scene[]
+}
+
+model Scene {
+  id                    String    @id @default(uuid())
+  name                  String
+  slug                  String
+  imageUrl              String
+  initialViewParameters Json?
+  projectId             String
+  project               Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  hotspots              Hotspot[]
+}
+
+model Hotspot {
+  id            String  @id @default(uuid())
+  title         String
+  text          String?
+  yaw           Float
+  pitch         Float
+  fov           Float?
+  type          String
+  targetSceneId String?
+  sceneId       String
+  scene         Scene   @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+}
