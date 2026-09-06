@@ -1,7 +1,24 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function POST(req) {
+interface HotspotInput {
+  title: string
+  text?: string | null
+  yaw: number
+  pitch: number
+  fov?: number | null
+  type: string
+  targetSceneId?: string | null
+}
+
+interface SceneInput {
+  name: string
+  imageUrl: string
+  initialViewParameters?: Record<string, any>
+  hotspots?: HotspotInput[]
+}
+
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { name, config } = body
@@ -19,13 +36,13 @@ export async function POST(req) {
         slug,
         settings: config?.settings || {},
         scenes: {
-          create: config?.scenes?.map((scene) => ({
+          create: config?.scenes?.map((scene: SceneInput) => ({
             name: scene.name,
             slug: scene.name.toLowerCase().replace(/ /g, '-'),
             imageUrl: scene.imageUrl,
             initialViewParameters: scene.initialViewParameters || {},
             hotspots: {
-              create: scene.hotspots?.map((hs) => ({
+              create: scene.hotspots?.map((hs: HotspotInput) => ({
                 title: hs.title,
                 text: hs.text || null,
                 yaw: hs.yaw,
@@ -49,7 +66,8 @@ export async function POST(req) {
 
     return NextResponse.json(project, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const err = error as Error
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
 
@@ -67,6 +85,7 @@ export async function GET() {
 
     return NextResponse.json(projects[0], { status: 200 })
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    const err = error as Error
+    return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }
