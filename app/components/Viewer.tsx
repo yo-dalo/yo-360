@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
+// @ts-ignore: no declaration file for marzipano
 import Marzipano from 'marzipano';
 import axios from 'axios';
 
