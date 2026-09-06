@@ -11,12 +11,13 @@ interface Hotspot {
     title?: string;
     text?: string;
     type?: string;
-    targetSceneId?: string;
+    targetSceneId?: string | null;
 }
 
 interface Scene {
     id: string;
     name: string;
+    slug: string;
     imageUrl: string;
     initialViewParameters: {
         yaw: number;
@@ -26,30 +27,27 @@ interface Scene {
     hotspots?: Hotspot[];
 }
 
-interface ApiResponse {
+interface TourResponse {
     id: string;
     name: string;
-    createdAt: string;
-    updatedAt: string;
-    config: {
-        settings: {
-            mouseViewMode: string;
-        };
-        scenes: Scene[];
+    slug: string;
+    settings: {
+        mouseViewMode: string;
     };
+    scenes: Scene[];
 }
 
 export default function Viewer() {
     const panoRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<any>(null);
-    const [panoData, setPanoData] = useState<ApiResponse | null>(null);
+    const [panoData, setPanoData] = useState<TourResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const response = await axios.get<ApiResponse>('/api/tour');
+                const response = await axios.get<TourResponse>('/api/tour');
                 setPanoData(response.data);
             } catch (err) {
                 setError('Panorama configuration load hone mein dikkat aayi');
@@ -62,9 +60,9 @@ export default function Viewer() {
     }, []);
 
     useEffect(() => {
-        if (!panoData || !panoRef.current || !panoData.config?.scenes?.length) return;
+        if (!panoData || !panoRef.current || !panoData.scenes?.length) return;
 
-        const { settings, scenes } = panoData.config;
+        const { settings, scenes } = panoData;
 
         const viewerOpts = {
             controls: {

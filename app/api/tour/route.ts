@@ -65,7 +65,7 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json(projects, { status: 200 })
+    return NextResponse.json(projects[0], { status: 200 })
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
