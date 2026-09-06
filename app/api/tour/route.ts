@@ -1,61 +1,72 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
-const prisma = new PrismaClient();
+export async function POST(req) {
+  try {
+    const body = await req.json()
+    const { name, config } = body
 
-// 1. GET ALL: Sabhi tours ki list fetch karne ke liye
-export async function GET() {
-    try {
-        const projects = await prisma.project.findMany({
-            select: {
-                id: true,
-                name: true,
-                createdAt: true,
-                updatedAt: true,
-                // Full config heavy ho sakta hai, isliye sirf basic info aur scene count select kar rahe hain
-                config: true 
+    const slug = name
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/[\s_-]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+    const project = await prisma.project.create({
+      data: {
+        name,
+        slug,
+        settings: config?.settings || {},
+        scenes: {
+          create: config?.scenes?.map((scene) => ({
+            name: scene.name,
+            slug: scene.name.toLowerCase().replace(/ /g, '-'),
+            imageUrl: scene.imageUrl,
+            initialViewParameters: scene.initialViewParameters || {},
+            hotspots: {
+              create: scene.hotspots?.map((hs) => ({
+                title: hs.title,
+                text: hs.text || null,
+                yaw: hs.yaw,
+                pitch: hs.pitch,
+                fov: hs.fov || null,
+                type: hs.type,
+                targetSceneId: hs.targetSceneId || null,
+              })) || [],
             },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        });
+          })) || [],
+        },
+      },
+      include: {
+        scenes: {
+          include: {
+            hotspots: true,
+          },
+        },
+      },
+    })
 
-        return NextResponse.json(projects[0], { status: 200 });
-    } catch (error) {
-        console.error('Fetch All Error:', error);
-        return NextResponse.json(
-            { error: 'Tours fetch karne mein dikkat aayi' },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(project, { status: 201 })
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 }
 
-// 2. CREATE: Naya tour create karne ke liye
-export async function POST(request: NextRequest) {
-    try {
-        const body = await request.json();
-        const { name, config } = body;
+export async function GET() {
+  try {
+    const projects = await prisma.project.findMany({
+      include: {
+        scenes: {
+          include: {
+            hotspots: true,
+          },
+        },
+      },
+    })
 
-        if (!name || !config) {
-            return NextResponse.json(
-                { error: 'Name aur Config data required hain' },
-                { status: 400 }
-            );
-        }
-
-        const newProject = await prisma.project.create({
-            data: {
-                name,
-                config
-            }
-        });
-
-        return NextResponse.json(newProject, { status: 201 });
-    } catch (error) {
-        console.error('Create Error:', error);
-        return NextResponse.json(
-            { error: 'Naya tour create karne mein dikkat aayi' },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(projects, { status: 200 })
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
 }
